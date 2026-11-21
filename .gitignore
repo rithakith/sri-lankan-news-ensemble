@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.streamlit/secrets.toml
+.env
+.env.*
+tmp/
+data/
+output/
+*.zip
+*.joblib
+!dashboard/artifacts/*.joblib
