@@ -36,7 +36,7 @@ def install(archive, destination, update_requirements=True):
             (destination / name).write_bytes(z.read(name))
         if update_requirements:
             (ROOT / 'dashboard' / 'requirements.txt').write_text(
-                'streamlit>=1.45,<2\nplotly>=6,<7\n-r artifacts/model-requirements.txt\n')
+                'streamlit==1.67.0\nplotly==6.9.0\n-r artifacts/model-requirements.txt\n')
         print(f"Installed {run['mode']} export into {destination}")
 
 

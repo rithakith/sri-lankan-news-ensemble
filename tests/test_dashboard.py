@@ -111,3 +111,32 @@ def test_app_evaluation_views(monkeypatch,tmp_path):
     for page in ['Compare models','Explore errors','Hybrid lab','Methodology']:
         app.sidebar.radio[0].set_value(page).run()
         assert not app.exception, page
+
+
+def test_installed_model_live_prediction_and_slider(monkeypatch):
+    import joblib
+    from streamlit.testing.v1 import AppTest
+    artifacts=ROOT/'dashboard/artifacts'
+    if not (artifacts/'hybrid_bundle.joblib').exists():
+        pytest.skip('No installed trained bundle')
+    bundle=joblib.load(artifacts/'hybrid_bundle.joblib')
+    text=model_text('Sri Lanka announces new education programme',
+                    'Schools will receive new learning materials and teacher training this year.')
+    result,_=infer(bundle,[text])
+    for probs in result.values():
+        assert probs.shape==(1,len(bundle['label_encoder'].classes_))
+        np.testing.assert_allclose(probs.sum(axis=1),1,atol=1e-5)
+    before=(artifacts/'test_predictions.csv').read_bytes()
+    monkeypatch.setenv('NEWS_ARTIFACT_DIR',str(artifacts))
+    app=AppTest.from_file(str(ROOT/'dashboard/app.py'),default_timeout=30).run()
+    app.sidebar.radio[0].set_value('Classify an article').run()
+    app.text_input[0].set_value('Sri Lanka announces new education programme')
+    app.text_area[0].set_value('Schools will receive new learning materials and teacher training this year.')
+    app.button[0].click().run()
+    assert not app.exception
+    assert len(app.dataframe)>=1
+    assert 'prediction' in app.session_state
+    app.sidebar.radio[0].set_value('Hybrid lab').run()
+    app.slider[0].set_value(.5).run()
+    assert not app.exception
+    assert before==(artifacts/'test_predictions.csv').read_bytes()

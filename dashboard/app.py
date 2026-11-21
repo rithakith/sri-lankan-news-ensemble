@@ -130,6 +130,7 @@ elif page == 'Classify an article':
         body = st.text_area('Article body', height=180, max_chars=50000, placeholder='Paste the article text here…')
         submitted = st.form_submit_button('Compare predictions', type='primary')
     if submitted:
+        st.session_state.pop('prediction', None)
         if not headline.strip() or not body.strip():
             st.warning('Enter both a headline and an article body.')
         else:
@@ -139,7 +140,7 @@ elif page == 'Classify an article':
                     st.info('The trained model export must be installed before live classification is available.')
                 else:
                     bundle, lock = loaded
-                    if list(bundle['label_encoder'].classes_) != run['categories']:
+                    if list(bundle['label_encoder'].classes_) != run['categories'] or not np.isclose(bundle['stack_weight'], run['stack_weight']):
                         raise ValueError('Model categories differ from the experiment metadata.')
                     with lock:
                         probabilities, timing = infer(bundle, [model_text(headline, body)])

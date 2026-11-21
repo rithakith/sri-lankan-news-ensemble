@@ -39,7 +39,11 @@ for split, ids in [('train', stack_train_ids), ('validation', stack_valid_ids), 
     support[split] = [int(counts.get(cat, 0)) for cat in categories]
 support.to_csv(export_dir / 'category_support.csv', index=False)
 versions = {name: importlib.metadata.version(name)
-            for name in ['numpy', 'scipy', 'pandas', 'scikit-learn', 'xgboost', 'joblib']}
+            for name in ['numpy', 'scipy', 'pandas', 'scikit-learn', 'joblib']}
+try:
+    versions['xgboost'] = importlib.metadata.version('xgboost')
+except importlib.metadata.PackageNotFoundError:
+    versions['xgboost'] = importlib.metadata.version('xgboost-cpu')
 run = {'mode': MODE, 'taxonomy_version': 'v8' if MODE == 'full_v8' else 'v7',
        'input_policy': bundle['input_policy'], 'categories': categories,
        'excluded_categories': list(excluded), 'input_articles': len(rows),
@@ -53,7 +57,7 @@ run = {'mode': MODE, 'taxonomy_version': 'v8' if MODE == 'full_v8' else 'v7',
 run['files_sha256'] = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in export_dir.iterdir()
                        if p.suffix in ['.csv', '.joblib']}
 (export_dir / 'run.json').write_text(json.dumps(run, indent=2))
-(export_dir / 'model-requirements.txt').write_text('\n'.join(f'{name}=={version}' for name, version in versions.items()) + '\n')
+(export_dir / 'model-requirements.txt').write_text('\n'.join(f"{'xgboost-cpu' if name == 'xgboost' else name}=={version}" for name, version in versions.items()) + '\n')
 archive = shutil.make_archive(str(export_dir), 'zip', root_dir=export_dir)
 print('Exported:', archive, '| Run:', MODE, '| Counts:', run['comparison_counts'])
 from google.colab import files

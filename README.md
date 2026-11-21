@@ -15,6 +15,18 @@ cd dashboard
 
 Without artifacts the app displays its methodology and clear pending states. It does not fabricate predictions or metrics.
 
+## Included experiment
+
+The checked-in model is a locally rebuilt **100-article v7 pilot**, with 65 eligible training articles, 14 validation articles and 14 test articles across eight eligible categories. It is included to exercise real end-to-end inference. It is not the completed 10,000-article v8 experiment. Exact package versions and dataset hash are recorded in `dashboard/artifacts/run.json`.
+
+To rebuild using the existing labelled pilot CSV:
+
+```bash
+.venv/bin/python scripts/train_dashboard.py --input data/english/audit/pilot_v7_100_review.csv --mode pilot_v7 --output output/dashboard_pilot
+```
+
+The source CSV is a local prerequisite and is not committed with the application. The local trainer reuses notebook model sections; it applies the original class-balanced grouped folds and category exclusions only for pilot mode. Full v8 training retains the full-data checks.
+
 ## Export trained models from Colab
 
 Run the training notebook through its frozen-model test section. Then run the final dashboard export cell, also supplied in `scripts/export_dashboard_section.py`. It exports `dashboard_export.zip` containing:
