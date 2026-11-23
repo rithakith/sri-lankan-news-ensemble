@@ -2,10 +2,6 @@
 
 **Ensemble learning for automated topic classification**
 
-R. K. Edirisinghe · 224048G
-
-A news-triage prototype that uses BART pseudo-labels to reduce manual training annotation, compares five classification approaches, and refines uncertain training labels through ensemble agreement. The final predictor is a saved **TF-IDF + LinearSVC** pipeline.
-
 [Presentation](https://www.canva.com/design/DAHbgyUrZkI/OCqJ3tTEl25WYWq05fOtzg/edit) · [Preprocessing notebook](News_Preprocessing.ipynb) · [Training notebook](News_Training.ipynb) · [Results report](results/ML_Assignment_Results_Report.md) · [Source dataset](https://github.com/nuuuwan/lk_news)
 
 ## Why this project
