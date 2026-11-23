@@ -1,4 +1,4 @@
-.venv/
+.venv*/
 __pycache__/
 .pytest_cache/
 **/.streamlit/secrets.toml
@@ -7,6 +7,8 @@ __pycache__/
 tmp/
 data/
 output/
+assignment_improvements/
+.chart-data-*/
 *.zip
 *.joblib
-!dashboard/artifacts/*.joblib
+!dashboard/models/final_classifier.joblib

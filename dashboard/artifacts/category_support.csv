@@ -1,9 +1,0 @@
-Category,train,validation,test
-business_economy,25,5,5
-crime_justice,7,2,2
-education,4,1,1
-health_environment,6,1,1
-other,2,1,1
-politics_governance,13,3,3
-telecommunications,2,0,0
-transport,6,1,1

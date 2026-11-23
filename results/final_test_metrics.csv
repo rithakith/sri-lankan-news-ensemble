@@ -1,0 +1,2 @@
+﻿model,stage,n,reference,accuracy,macro_f1,weighted_f1,precision,recall
+LinearSVC,selected_refined,1941,BART pseudo-label,0.7712519319938176,0.6019130859747187,0.7617613401844691,0.6651667537187637,0.5886530998677413

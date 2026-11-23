@@ -1,0 +1,169 @@
+{
+  "dataset_sha256": "d18e3a42036021cdf0eb8608e2a81a43da469f5703cadacc93e38629913639ef",
+  "artifacts": [
+    {
+      "path": "results/audit_refinement_changes.csv",
+      "drive_file_id": "1QfKYH1nOhsfQoMjuXTa2VibnXhxC2hYs",
+      "source_url": "https://drive.google.com/file/d/1QfKYH1nOhsfQoMjuXTa2VibnXhxC2hYs/view?usp=drivesdk",
+      "modified_time": "2026-11-23T09:50:30.580Z",
+      "sha256": "716a7b06d80c4fea3a0a913fd79218053b0003f404c5ae4341bbf5b9238196c0",
+      "size_bytes": 65,
+      "downloaded_utc": "2026-11-23T10:26:56.052264+00:00"
+    },
+    {
+      "path": "results/human_audit_joined_predictions.csv",
+      "drive_file_id": "1YZ3_eHDA4cWgtvMjnD59RWG3wRehFRiF",
+      "source_url": "https://drive.google.com/file/d/1YZ3_eHDA4cWgtvMjnD59RWG3wRehFRiF/view?usp=drivesdk",
+      "modified_time": "2026-11-23T09:50:30.516Z",
+      "sha256": "24d1661f3c4b79d443188ea6af24fa8744dd10a0651a10d46a7840dd88296a15",
+      "size_bytes": 134842,
+      "downloaded_utc": "2026-11-23T10:26:56.052699+00:00"
+    },
+    {
+      "path": "results/human_audit_bootstrap_intervals.csv",
+      "drive_file_id": "17drvgdPaNxl3tXNq-XJAPUt_6naVSeF4",
+      "source_url": "https://drive.google.com/file/d/17drvgdPaNxl3tXNq-XJAPUt_6naVSeF4/view?usp=drivesdk",
+      "modified_time": "2026-11-23T09:50:29.935Z",
+      "sha256": "8da1761252dd751e8c0434d614e608fcbd20b3cf1bef490512678cd28bf29e8a",
+      "size_bytes": 941,
+      "downloaded_utc": "2026-11-23T10:26:56.052748+00:00"
+    },
+    {
+      "path": "results/human_audit_metrics.csv",
+      "drive_file_id": "1I6hsEjAmtQWpDdLNtFazDEzszr3gU-qz",
+      "source_url": "https://drive.google.com/file/d/1I6hsEjAmtQWpDdLNtFazDEzszr3gU-qz/view?usp=drivesdk",
+      "modified_time": "2026-11-23T09:50:29.173Z",
+      "sha256": "eb8b735376179818c55aa9e632930e5032532e610a328e0078416937d44db114",
+      "size_bytes": 1064,
+      "downloaded_utc": "2026-11-23T10:26:56.052778+00:00"
+    },
+    {
+      "path": "results/final_test_per_category.csv",
+      "drive_file_id": "11JkRkQg0UbmrmAbQ9TE28HLIhtkoVYTd",
+      "source_url": "https://drive.google.com/file/d/11JkRkQg0UbmrmAbQ9TE28HLIhtkoVYTd/view?usp=drivesdk",
+      "modified_time": "2026-11-23T09:46:21.503Z",
+      "sha256": "295b657eb59daee255145b5ad5a40d7744a87382b48bde517e9e2870199c0d65",
+      "size_bytes": 1161,
+      "downloaded_utc": "2026-11-23T10:26:56.052809+00:00"
+    },
+    {
+      "path": "results/final_test_metrics.csv",
+      "drive_file_id": "1pCB1bljQkbWG88uwSwZALDqdMZdH1xrL",
+      "source_url": "https://drive.google.com/file/d/1pCB1bljQkbWG88uwSwZALDqdMZdH1xrL/view?usp=drivesdk",
+      "modified_time": "2026-11-23T09:46:20.791Z",
+      "sha256": "87d04f5393ff139496887b83d0ee2227ffd4e097bdd3222b00cf7793ffb05022",
+      "size_bytes": 219,
+      "downloaded_utc": "2026-11-23T10:26:56.052838+00:00"
+    },
+    {
+      "path": "results/run_manifest.json",
+      "drive_file_id": "1I8EkRdf4rj5sjCMrU5stpGDHUupdWPit",
+      "source_url": "https://drive.google.com/file/d/1I8EkRdf4rj5sjCMrU5stpGDHUupdWPit/view?usp=drivesdk",
+      "modified_time": "2026-11-23T04:30:53.869Z",
+      "sha256": "09ed7a39f6d57873bc5b6e0df025bc84239c63a6dd1b944b474f0e6ec4629eaf",
+      "size_bytes": 5751,
+      "downloaded_utc": "2026-11-23T10:26:56.052872+00:00"
+    },
+    {
+      "path": "results/ML_Assignment_Results_Report.md",
+      "drive_file_id": "1C38_SQbVvmoa7gkU0xA2C0hW142KJT6C",
+      "source_url": "https://docs.google.com/document/d/1C38_SQbVvmoa7gkU0xA2C0hW142KJT6C/edit?usp=drivesdk&ouid=111647804196090320153&rtpof=true&sd=true",
+      "modified_time": "2026-11-23T04:30:53.819Z",
+      "size_bytes": 15290,
+      "downloaded_utc": "2026-11-23T10:26:56.052947+00:00",
+      "source_sha256": "9e84e5bbd6c51207b72640198f6c05afddb5abfdb0d3f8270c19df3ea52d61b7",
+      "sha256": "12df6d07b4b7049151374900756182b0e9c8a4109ce05c8a358a36615361200f",
+      "transformation": "Removed repeated figure sections; linked five selected figures; added annotation provenance note."
+    },
+    {
+      "path": "results/model_requirements.txt",
+      "drive_file_id": "1RDMsw0CN4ALcfpWFSfVSBtaODrtwIjlh",
+      "source_url": "https://drive.google.com/file/d/1RDMsw0CN4ALcfpWFSfVSBtaODrtwIjlh/view?usp=drivesdk",
+      "modified_time": "2026-11-23T04:30:21.406Z",
+      "sha256": "d8907592c31e3e4cc3f8f770e261982ddeebbf9ddac6130b8b985be2fd538c37",
+      "size_bytes": 61,
+      "downloaded_utc": "2026-11-23T10:26:56.052973+00:00"
+    },
+    {
+      "path": "dashboard/models/final_classifier.joblib",
+      "drive_file_id": "1NGzIlb86_tYkatGLQjVebtwx7TnwmND3",
+      "source_url": "https://drive.google.com/file/d/1NGzIlb86_tYkatGLQjVebtwx7TnwmND3/view?usp=drivesdk",
+      "modified_time": "2026-11-23T04:30:21.144Z",
+      "sha256": "d49a8312b5eed9769bf3c785113c59483a8258ff87396660a41b913239aa6969",
+      "size_bytes": 1303075,
+      "downloaded_utc": "2026-11-23T10:26:56.056491+00:00"
+    },
+    {
+      "path": "results/model_comparison_validation.csv",
+      "drive_file_id": "1PIv7Vuj2bznaeAnY4DYmji_LuhTbAX5i",
+      "source_url": "https://drive.google.com/file/d/1PIv7Vuj2bznaeAnY4DYmji_LuhTbAX5i/view?usp=drivesdk",
+      "modified_time": "2026-11-23T04:30:18.264Z",
+      "sha256": "f1365f09a525a624c95dd94383502b9618e2dd5108ff5e707daa524144b89355",
+      "size_bytes": 3711,
+      "downloaded_utc": "2026-11-23T10:26:56.056560+00:00"
+    },
+    {
+      "path": "results/coverage_reliability_proxies.csv",
+      "drive_file_id": "1WBsCBc5GzcSvUuXW_ZnqzhBcB_OE8vCV",
+      "source_url": "https://drive.google.com/file/d/1WBsCBc5GzcSvUuXW_ZnqzhBcB_OE8vCV/view?usp=drivesdk",
+      "modified_time": "2026-11-23T04:29:51.604Z",
+      "sha256": "1cb04fa4cec118a5725740cc93b7b96a6dd8f19f7b1f75ba1fcb80edcc3237e9",
+      "size_bytes": 933,
+      "downloaded_utc": "2026-11-23T10:26:56.056591+00:00"
+    },
+    {
+      "path": "results/frozen_selection.json",
+      "drive_file_id": "18VVFcdDtcEi2Sy1ZLGYtXbwDAYTr_VQx",
+      "source_url": "https://drive.google.com/file/d/18VVFcdDtcEi2Sy1ZLGYtXbwDAYTr_VQx/view?usp=drivesdk",
+      "modified_time": "2026-11-23T03:26:25.893Z",
+      "sha256": "f2535331908ba1e270c3243a74a277d06921f57341a8ebaae148e0bcac215d32",
+      "size_bytes": 1681,
+      "downloaded_utc": "2026-11-23T10:26:56.056625+00:00"
+    },
+    {
+      "path": "results/figures/audit_svc_vs_bart.png",
+      "drive_file_id": "1hN9exDBc_wY5OQrurKvwnkXqMdXR0uSr",
+      "source_url": "https://drive.google.com/file/d/1hN9exDBc_wY5OQrurKvwnkXqMdXR0uSr/view?usp=drivesdk",
+      "modified_time": "2026-11-23T09:53:44.863Z",
+      "sha256": "98a01bcca913f5521a5b3ea7fb205d0b1c875920051c941e6a32f6613910f195",
+      "size_bytes": 186515,
+      "downloaded_utc": "2026-11-23T10:26:56.057059+00:00"
+    },
+    {
+      "path": "results/figures/audit_human_vs_bart.png",
+      "drive_file_id": "187WYTHmlwzWkQ39ObWlWUPSbtbrd8lKW",
+      "source_url": "https://drive.google.com/file/d/187WYTHmlwzWkQ39ObWlWUPSbtbrd8lKW/view?usp=drivesdk",
+      "modified_time": "2026-11-23T09:51:02.602Z",
+      "sha256": "4d310e42257c448ebf49f2e00df1e5acd142bb7b2df833f232a98d211bb3c7b4",
+      "size_bytes": 183509,
+      "downloaded_utc": "2026-11-23T10:26:56.057378+00:00"
+    },
+    {
+      "path": "results/figures/audit_human_vs_frozen_svc.png",
+      "drive_file_id": "1M0qfAPsBLuGEV8-0m3WKfHbakvKajd7K",
+      "source_url": "https://drive.google.com/file/d/1M0qfAPsBLuGEV8-0m3WKfHbakvKajd7K/view?usp=drivesdk",
+      "modified_time": "2026-11-23T09:50:46.866Z",
+      "sha256": "11aa23dfcd046720f29f9e4d7792d5499f0bcdaa33030b3cadf4af80b23077ba",
+      "size_bytes": 187317,
+      "downloaded_utc": "2026-11-23T10:26:56.057699+00:00"
+    },
+    {
+      "path": "results/figures/audit_compact_model_comparison.png",
+      "drive_file_id": "1gqXfa52NvecnX3rs5EpgwalVnlf1cWRX",
+      "source_url": "https://drive.google.com/file/d/1gqXfa52NvecnX3rs5EpgwalVnlf1cWRX/view?usp=drivesdk",
+      "modified_time": "2026-11-23T09:50:30.516Z",
+      "sha256": "f3eeebc765019a08e4d6cd61f0fe464cfa065deff6307445e8f19632bfc269e1",
+      "size_bytes": 50195,
+      "downloaded_utc": "2026-11-23T10:26:56.057806+00:00"
+    },
+    {
+      "path": "results/figures/model_comparison.png",
+      "drive_file_id": "1ZDDYqyIUe6_pD6VV5UOgwICONRfxcWpz",
+      "source_url": "https://drive.google.com/file/d/1ZDDYqyIUe6_pD6VV5UOgwICONRfxcWpz/view?usp=drivesdk",
+      "modified_time": "2026-11-23T04:30:18.272Z",
+      "sha256": "c19629814eb8ac900a4c1e6d444987b2b0fb9af4e7582b8143b439f2294deae0",
+      "size_bytes": 53714,
+      "downloaded_utc": "2026-11-23T10:26:56.057926+00:00"
+    }
+  ]
+}

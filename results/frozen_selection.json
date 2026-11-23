@@ -1,0 +1,60 @@
+{
+  "dataset_sha256": "d18e3a42036021cdf0eb8608e2a81a43da469f5703cadacc93e38629913639ef",
+  "run_hash": "a38d5ab8c6a1695170264592230cccb8d0eb9c17bc43aceb7b17e32c02c4f6c4",
+  "config": {
+    "seed": 42,
+    "duplicate_cosine": 0.9,
+    "audit_size": 300,
+    "features": 12000,
+    "rf_trees": 100,
+    "xgb_trees": 80,
+    "oof_folds": 3,
+    "protocol": "group_audit_v1"
+  },
+  "selected_stage": "selected_refined",
+  "selected_model": "LinearSVC",
+  "validation_metrics": {
+    "stage": "selected_refined",
+    "model": "LinearSVC",
+    "reference": "BART pseudo-label",
+    "n": 1550,
+    "fit_seconds": 6.053799214999344,
+    "inference_seconds_all_models": 5.885635994999575,
+    "accuracy": 0.7709677419354839,
+    "macro_f1": 0.6421608026965878,
+    "weighted_f1": 0.763707763804017,
+    "precision": 0.7283435664425573,
+    "recall": 0.6219292407019148
+  },
+  "selected_rule": {
+    "confidence": 0.95,
+    "margin": 0.3,
+    "agreement": "unanimous",
+    "cap_multiplier": 1.0
+  },
+  "selection_policy": "validation macro F1, weighted F1 and fit seconds for exact ties",
+  "reference": "BART pseudo-labels, not human ground truth",
+  "categories": [
+    "business_economy",
+    "crime_justice",
+    "education",
+    "entertainment",
+    "health_healthcare",
+    "information_technology",
+    "other",
+    "politics_governance",
+    "sport",
+    "telecommunications",
+    "tourism_travel",
+    "transport",
+    "weather_environment_disasters"
+  ],
+  "test_development_exposure": "prior notebook test results were already viewed",
+  "versions": {
+    "python": "3.13.18",
+    "numpy": "2.4.6",
+    "pandas": "2.2.3",
+    "scikit-learn": "1.6.1",
+    "xgboost": "3.4.1"
+  }
+}

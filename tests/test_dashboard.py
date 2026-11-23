@@ -1,142 +1,64 @@
-"""Tests for model ordering, frozen evaluation, and dashboard states. ChatGPT-assisted."""
+"""Verify real predictions, saved evaluations and dashboard interactions."""
 import sys
-import json
-import hashlib
-import zipfile
 from pathlib import Path
 import numpy as np
 import pandas as pd
 import pytest
+from sklearn.metrics import accuracy_score, f1_score
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'dashboard'))
-sys.path.insert(0, str(ROOT / 'scripts'))
-from core import MODEL_NAMES, model_text, infer, blend, validate_bundle, scores, category_scores, predictions
-from import_dashboard_export import install
+from core import MODEL, STAGES, audit_matrix, load_classifier, predict_article, selection, table
 
+def test_saved_metrics_reproduce_reviewed_predictions():
+    audit = table('human_audit_joined_predictions.csv')
+    assert len(audit) == 300 and audit.doc_id.is_unique
+    mapping = {'BART': 'bart_label', 'Initial ensemble': 'initial_ensemble_prediction',
+               'Refined ensemble': 'refined_ensemble_prediction', 'Final classifier': 'final_prediction'}
+    for _, row in table('human_audit_metrics.csv').query("weighting == 'unweighted audit'").iterrows():
+        assert accuracy_score(audit.human_label, audit[mapping[row.model]]) == pytest.approx(row.accuracy)
+        assert f1_score(audit.human_label, audit[mapping[row.model]], labels=selection()['categories'],
+                        average='macro', zero_division=0) == pytest.approx(row.macro_f1)
+    for columns in [('human_label','final_prediction'), ('human_label','bart_label'), ('bart_label','final_prediction')]:
+        cm = audit_matrix(*columns, selection()['categories'])
+        assert cm.shape == (13, 13)
+        np.testing.assert_allclose(cm.sum(axis=1), 1)
 
-class FixedModel:
-    def __init__(self, values):
-        self.classes_ = np.arange(2)
-        self.values = values
-    def predict_proba(self, texts):
-        return np.tile(self.values, (len(texts), 1))
+def test_all_training_stages_and_frozen_winner():
+    compared = table('model_comparison_validation.csv')
+    assert len(compared) == 20
+    assert set(compared.stage) == set(STAGES)
+    winner = compared.sort_values('macro_f1', ascending=False).iloc[0]
+    assert (winner.model, winner.stage) == ('LinearSVC', 'selected_refined')
 
+def test_real_pipeline_decodes_integer_classes_and_scores():
+    saved = load_classifier()
+    headline, body = 'Sri Lanka wins cricket match', 'The national cricket team won the tournament after scoring runs.'
+    result = predict_article(saved, headline, body)
+    expected = int(saved['pipeline'].predict([headline+'\n'+body])[0])
+    assert result['category'] == saved['topics'][expected]
+    assert result['known_terms'] > 0
+    assert len(result['alternatives']) == 3
+    assert result['alternatives']['Decision score'].is_monotonic_decreasing
+    with pytest.raises(ValueError):
+        predict_article(saved, '', ' ')
 
-class MetaModel(FixedModel):
-    def predict_proba(self, blocks):
-        # Require saved non-default base order: XGB, LR, RF.
-        np.testing.assert_allclose(blocks[0], [.2,.8,.6,.4,.7,.3])
-        return np.tile(self.values, (len(blocks),1))
-
-
-@pytest.fixture
-def bundle():
-    from sklearn.preprocessing import LabelEncoder
-    return {'ann_pipeline': FixedModel([.1,.9]),
-            'stack_base_pipelines': {'LR':FixedModel([.6,.4]),'RF':FixedModel([.7,.3]),'XGB':FixedModel([.2,.8])},
-            'stack_meta': MetaModel([.8,.2]), 'base_order':['XGB','LR','RF'],
-            'label_encoder':LabelEncoder().fit(['business','sport']), 'stack_weight':.25,
-            'input_policy':'headline_plus_first_200_body_words'}
-
-
-def test_saved_base_order_and_hybrid(bundle):
-    result, timing = infer(bundle,['Headline\nBody'])
-    np.testing.assert_allclose(result['Selected hybrid'], [[.275,.725]])
-    np.testing.assert_allclose(blend(result['Stacking'],result['ANN'],0), result['ANN'])
-    assert set(timing)==set(MODEL_NAMES)
-    bundle['ann_pipeline'].classes_ = np.array([1,0])
-    with pytest.raises(ValueError, match='Class order'): validate_bundle(bundle)
-
-
-def test_input_policy_and_unknown_weight():
-    body=' '.join(str(i) for i in range(210))
-    assert model_text('Headline', body)=='Headline\n'+' '.join(str(i) for i in range(200))
-    with pytest.raises(ValueError): blend(np.ones(2),np.ones(2),float('nan'))
-
-
-def frame():
-    return pd.DataFrame({'doc_id':['1','2'],'headline':['A','B'],'BART_reference':['business','sport'],
-                         **{name:['business','business'] for name in MODEL_NAMES}})
-
-
-def test_metrics_include_unsupported_category():
-    f=frame()
-    categories=['business','sport','education']
-    result=scores(f,categories)
-    assert result.Agreement.eq(.5).all()
-    assert result['Macro-F1'].iloc[0] == pytest.approx(2/9)
-    detail=category_scores(f,'LR',categories)
-    assert np.isnan(detail.loc[2,'F1'])
-
-
-def test_prediction_export_rejects_unknown_category(tmp_path):
-    f=frame()
-    f.to_csv(tmp_path/'test_predictions.csv',index=False)
-    assert len(predictions(tmp_path,'test',['business','sport']))==2
-    with pytest.raises(ValueError): predictions(tmp_path,'test',['business'])
-
-
-def test_import_rejects_unsafe_paths(tmp_path):
-    z=tmp_path/'bad.zip'
-    with zipfile.ZipFile(z,'w') as f: f.writestr('../outside','bad')
-    with pytest.raises(ValueError,match='unexpected'): install(z,tmp_path/'out',False)
-
-
-def test_app_all_empty_states(monkeypatch,tmp_path):
+def test_dashboard_views_and_live_prediction():
     from streamlit.testing.v1 import AppTest
-    monkeypatch.setenv('NEWS_ARTIFACT_DIR',str(tmp_path))
-    app=AppTest.from_file(str(ROOT/'dashboard/app.py'),default_timeout=20).run()
+    app = AppTest.from_file(str(ROOT / 'dashboard/app.py')).run(timeout=30)
     assert not app.exception
-    for page in ['Classify an article','Compare models','Explore errors','Hybrid lab','Methodology','Overview']:
-        app.sidebar.radio[0].set_value(page).run()
-        assert not app.exception, page
-    app.sidebar.radio[0].set_value('Classify an article').run()
+    assert app.metric[0].value == '64%'
+    next(r for r in app.radio if r.label == 'Evaluation').set_value('Validation experiments').run()
+    assert not app.exception
+    for choice in ['Human labels vs BART', 'LinearSVC vs BART']:
+        app.selectbox[0].set_value(choice).run()
+        assert not app.exception
+    app.sidebar.radio[0].set_value('About the study').run()
+    assert not app.exception
+    app.sidebar.radio[0].set_value('Predict an article').run()
     app.button[0].click().run()
-    assert len(app.warning)>0
-
-
-def test_app_evaluation_views(monkeypatch,tmp_path):
-    from streamlit.testing.v1 import AppTest
-    f=frame()
-    f.to_csv(tmp_path/'validation_predictions.csv',index=False)
-    f.assign(doc_id=['3','4']).to_csv(tmp_path/'test_predictions.csv',index=False)
-    run={'mode':'pilot_v7','taxonomy_version':'v7','categories':['business','sport','education'],
-         'input_policy':'headline_plus_first_200_body_words','stack_weight':0,
-         'comparison_counts':{'train':10,'validation':2,'test':2}}
-    (tmp_path/'run.json').write_text(json.dumps(run))
-    monkeypatch.setenv('NEWS_ARTIFACT_DIR',str(tmp_path))
-    app=AppTest.from_file(str(ROOT/'dashboard/app.py'),default_timeout=20).run()
-    assert not app.exception
-    for page in ['Compare models','Explore errors','Hybrid lab','Methodology']:
-        app.sidebar.radio[0].set_value(page).run()
-        assert not app.exception, page
-
-
-def test_installed_model_live_prediction_and_slider(monkeypatch):
-    import joblib
-    from streamlit.testing.v1 import AppTest
-    artifacts=ROOT/'dashboard/artifacts'
-    if not (artifacts/'hybrid_bundle.joblib').exists():
-        pytest.skip('No installed trained bundle')
-    bundle=joblib.load(artifacts/'hybrid_bundle.joblib')
-    text=model_text('Sri Lanka announces new education programme',
-                    'Schools will receive new learning materials and teacher training this year.')
-    result,_=infer(bundle,[text])
-    for probs in result.values():
-        assert probs.shape==(1,len(bundle['label_encoder'].classes_))
-        np.testing.assert_allclose(probs.sum(axis=1),1,atol=1e-5)
-    before=(artifacts/'test_predictions.csv').read_bytes()
-    monkeypatch.setenv('NEWS_ARTIFACT_DIR',str(artifacts))
-    app=AppTest.from_file(str(ROOT/'dashboard/app.py'),default_timeout=30).run()
-    app.sidebar.radio[0].set_value('Classify an article').run()
-    app.text_input[0].set_value('Sri Lanka announces new education programme')
-    app.text_area[0].set_value('Schools will receive new learning materials and teacher training this year.')
-    app.button[0].click().run()
-    assert not app.exception
-    assert len(app.dataframe)>=1
-    assert 'prediction' in app.session_state
-    app.sidebar.radio[0].set_value('Hybrid lab').run()
-    app.slider[0].set_value(.5).run()
-    assert not app.exception
-    assert before==(artifacts/'test_predictions.csv').read_bytes()
+    assert app.warning
+    app.text_input[0].set_value('Sri Lanka wins cricket match')
+    app.text_area[0].set_value('The cricket team won the tournament after scoring runs.')
+    app.button[0].click().run(timeout=30)
+    assert not app.exception and len(app.dataframe) == 1

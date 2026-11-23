@@ -1,0 +1,6 @@
+{
+  "verified_articles": 300,
+  "matching_saved_predictions": 300,
+  "scikit_learn": "1.6.1",
+  "model_sha256": "d49a8312b5eed9769bf3c785113c59483a8258ff87396660a41b913239aa6969"
+}
