@@ -6,7 +6,7 @@ R. K. Edirisinghe · 224048G
 
 A news-triage prototype that uses BART pseudo-labels to reduce manual training annotation, compares five classification approaches, and refines uncertain training labels through ensemble agreement. The final predictor is a saved **TF-IDF + LinearSVC** pipeline.
 
-[Presentation](https://www.canva.com/design/DAHbgyUrZkI/OCqJ3tTEl25WYWq05fOtzg/edit) · [Preprocessing notebook](News_Preprocessing.ipynb) · [Training notebook](News_Training.ipynb) · [Results report](results/ML_Assignment_Results_Report.md) · [Dashboard implementation](dashboard/app.py) · [Source dataset](https://github.com/nuuuwan/lk_news)
+[Presentation](https://www.canva.com/design/DAHbgyUrZkI/OCqJ3tTEl25WYWq05fOtzg/edit) · [Preprocessing notebook](News_Preprocessing.ipynb) · [Training notebook](News_Training.ipynb) · [Results report](results/ML_Assignment_Results_Report.md) · [Source dataset](https://github.com/nuuuwan/lk_news)
 
 ## Why this project
 
@@ -115,14 +115,6 @@ The supplied audit was described by the user as reviewed, but its retained annot
 
 The [three audit heatmaps](results/figures) distinguish supplied labels versus LinearSVC, supplied labels versus BART, and LinearSVC versus BART. The last measures agreement between model predictions, not correctness.
 
-## Dashboard and saved model
-
-The dashboard presents the essential results, interactive model comparisons, selectable blue heatmaps, article prediction, study context and sources. Its white layout uses top navigation and keeps secondary detail out of the main view.
-
-Live prediction loads the [frozen model artifact](dashboard/models/final_classifier.joblib), which contains the fitted TF-IDF vectorizer, LinearSVC classifier, category mapping and selection metadata. It applies the same headline-plus-full-body input policy and displays the leading topic scores. Those decision scores are **not probabilities**. A small score margin flags a prediction for review; that flag is a heuristic, not a reliability guarantee.
-
-The saved pipeline reproduced **300/300 stored audit predictions** in the inference check. This verifies implementation consistency, not classification correctness. Ambiguous or unfamiliar articles can still receive incorrect labels.
-
 ## What we learned
 
 Cautious pseudo-label refinement increased the training set by about 10% and modestly improved most validation models. More pseudo-labeled data did not help every model, and stacking did not outperform the selected standalone classifier. The project demonstrates a functioning news-triage workflow, with clear reasons to retain human review.
@@ -135,7 +127,6 @@ Shared teacher errors, topic overlap, limited rare-category examples, uncalibrat
 - [Preprocessing notebook](News_Preprocessing.ipynb) and [training notebook](News_Training.ipynb) — implementation and saved outputs.
 - [Results report](results/ML_Assignment_Results_Report.md) and [selected exports](results) — comparison tables, audit evidence and figures.
 - [Frozen selection](results/frozen_selection.json) and [artifact provenance](results/artifact_manifest.json) — dataset hash, configuration and source records.
-- [Dashboard source](dashboard/app.py) and [saved classifier](dashboard/models/final_classifier.joblib) — the application and final predictor.
 - [Upstream dataset](https://github.com/nuuuwan/lk_news) and [BART model](https://huggingface.co/facebook/bart-large-mnli) — source corpus and zero-shot teacher.
 
-Implemented with pandas, NumPy, scikit-learn, XGBoost, Streamlit and Plotly.
+Implemented with pandas, NumPy, scikit-learn and XGBoost.
