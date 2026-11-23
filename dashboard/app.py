@@ -4,14 +4,26 @@ import plotly.express as px
 import streamlit as st
 from core import AUDIT_NAMES, STAGES, audit_matrix, load_classifier, predict_article, selection, table
 
-st.set_page_config(page_title='NewsLab · Sri Lankan News', page_icon='📰', layout='wide')
-st.markdown('''<style>.block-container{max-width:1200px;padding-top:2.5rem}
-h1{letter-spacing:-.04em}[data-testid=stMetric]{border:1px solid #dde6eb;padding:1rem;border-radius:12px}</style>''', unsafe_allow_html=True)
-st.sidebar.title('NewsLab')
-st.sidebar.caption('SRI LANKAN NEWS CLASSIFICATION')
-page = st.sidebar.radio('Explore', ['Results', 'Predict an article', 'About the study'])
-st.sidebar.divider()
-st.sidebar.caption('TF-IDF + LinearSVC · selected refined\n\n13 news categories')
+st.set_page_config(page_title='Sri Lankan News Classification', page_icon='📰', layout='wide')
+st.markdown('''<style>
+.stApp, [data-testid="stHeader"] {background:#fff;color:#18212f}
+.block-container {max-width:1180px;padding-top:2rem;padding-bottom:4rem}
+h1 {font-size:2.3rem!important;letter-spacing:-.045em;line-height:1.15!important;font-weight:650!important}
+h3 {font-size:1.25rem!important;letter-spacing:-.02em;margin-top:1.5rem!important}
+[data-testid="stCaptionContainer"] {color:#687180}
+[data-testid="stMetric"] {border:1px solid #e7e9ee;padding:1.25rem 1.4rem;border-radius:10px;background:#fff}
+[data-testid="stMetricLabel"] {color:#687180;font-size:.85rem}
+[data-testid="stMetricValue"] {font-size:2.1rem;letter-spacing:-.04em}
+[data-baseweb="select"]>div {background:#fff;border-color:#dce0e7;border-radius:8px;min-height:44px}
+[data-testid="stSegmentedControl"] {margin-bottom:.6rem}
+[data-testid="stButtonGroup"] button {border-radius:7px!important;font-weight:500!important}
+[data-testid="stVerticalBlockBorderWrapper"] {border-color:#e7e9ee!important;border-radius:10px!important}
+.brand {font-size:1.3rem;font-weight:700;letter-spacing:-.045em;margin:0}
+.brand-sub {font-size:.78rem;color:#79818e;margin:2px 0 20px}
+hr {border-color:#eceef2}
+</style>''', unsafe_allow_html=True)
+page = st.segmented_control('Explore', ['Results', 'Predict an article', 'About the study', 'Sources'], default='Results', selection_mode='single', label_visibility='collapsed') or 'Results'
+st.divider()
 frozen = selection()
 topics = frozen['categories']
 
@@ -23,7 +35,7 @@ def classifier():
     return load_classifier()
 
 if page == 'Results':
-    st.title('Less manual labeling. Measured results.')
+    st.title('News classification, evaluated.')
     st.caption('One completed experiment on 10,000 Sri Lankan news articles. No simulated scores.')
     audit = table('human_audit_metrics.csv').query("weighting == 'unweighted audit'")
     final = audit.loc[audit.model.eq('Final classifier')].iloc[0]
@@ -35,14 +47,16 @@ if page == 'Results':
     cols[2].metric('Test agreement with BART', f'{test.accuracy:.1%}')
     st.caption('192/300 reviewed labels matched. BART agreement uses 1,941 different test articles; it is not human-verified accuracy.')
     st.subheader('Which models performed best?')
-    view = st.radio('Evaluation', ['Reviewed audit', 'Validation experiments'], horizontal=True)
+    view = st.segmented_control('Evaluation', ['Reviewed audit', 'Validation experiments'], default='Reviewed audit', label_visibility='collapsed') or 'Reviewed audit'
     if view == 'Reviewed audit':
         shown = audit.assign(Model=audit.model.map(AUDIT_NAMES))
         long = shown.melt(id_vars='Model', value_vars=['accuracy', 'macro_f1'], var_name='Measure', value_name='Score')
         fig = px.bar(long, x='Model', y='Score', color='Measure', barmode='group',
                      color_discrete_sequence=['#397da8', '#e69b45'], range_y=[0, 1])
         fig.update_layout(legend_title_text='', xaxis_title='', margin=dict(t=15, b=10))
-        st.plotly_chart(fig, width='stretch')
+        fig.update_layout(paper_bgcolor='white', plot_bgcolor='white', font_color='#394354', legend=dict(orientation='h', y=1.13, x=0))
+        fig.update_yaxes(gridcolor='#eef0f3', zeroline=False)
+        st.plotly_chart(fig, width='stretch', config={'displayModeBar': False})
         st.caption('Same 300 reviewed labels for every model. LinearSVC has higher accuracy; BART has slightly higher macro F1. The audit did not select the model.')
     else:
         compared = table('model_comparison_validation.csv')
@@ -51,7 +65,9 @@ if page == 'Results':
                      category_orders={'Stage': list(STAGES.values())}, range_y=[0, 1],
                      color_discrete_sequence=['#b7d4e8', '#78add0', '#397da8', '#154b73'])
         fig.update_layout(yaxis_title='Validation macro F1', xaxis_title='', margin=dict(t=15, b=10))
-        st.plotly_chart(fig, width='stretch')
+        fig.update_layout(paper_bgcolor='white', plot_bgcolor='white', font_color='#394354', legend=dict(orientation='h', y=1.15, x=0))
+        fig.update_yaxes(gridcolor='#eef0f3', zeroline=False)
+        st.plotly_chart(fig, width='stretch', config={'displayModeBar': False})
         st.caption('Five classifiers × four stages, evaluated against BART pseudo-labels. Selected-refined LinearSVC won at macro F1 0.642. Stacking and weighting did not beat it.')
     st.subheader('Where do predictions disagree?')
     choice = st.selectbox('Heatmap comparison', ['Human labels vs LinearSVC', 'Human labels vs BART', 'LinearSVC vs BART'])
@@ -65,9 +81,11 @@ if page == 'Results':
     fig.update_layout(height=650, xaxis_title='Predicted category',
                       yaxis_title='BART reference' if reference == 'bart_label' else 'Human-reviewed category',
                       margin=dict(t=10, b=10), coloraxis_colorbar_title='Row fraction')
-    st.plotly_chart(fig, width='stretch')
+    fig.update_layout(paper_bgcolor='white', plot_bgcolor='white', font_color='#394354')
+    st.plotly_chart(fig, width='stretch', config={'displayModeBar': False})
     st.caption('Rows sum to one. Diagonal cells show category recall against the chosen reference. SVC vs BART measures agreement, not correctness.')
-    with st.expander('Key findings and uncertainty'):
+    with st.container(border=True):
+        st.markdown('**What to take away**')
         st.write('Refinement added 315 articles to 3,156 seeds (about 10%). Four of five classifiers improved validation macro F1; XGBoost declined.')
         ci = table('human_audit_bootstrap_intervals.csv').query("model == 'Final classifier' and weighting == 'unweighted audit'").iloc[0]
         st.write(f'Descriptive 95% bootstrap interval for reviewed-label accuracy: {ci.accuracy_low:.1%}–{ci.accuracy_high:.1%}. Small category samples and one supplied review set limit certainty.')
@@ -97,8 +115,9 @@ elif page == 'Predict an article':
             except (ValueError, OSError, KeyError) as exc:
                 st.error(f'Unable to use the saved classifier: {exc}')
 
-else:
+elif page == 'About the study':
     st.title('About the study')
+    st.write('The source corpus comes from nuuuwan/lk_news, an archive of Sri Lankan news. The preprocessing notebook records the exact upstream snapshot and filtering steps; this experiment uses a 10,000-article English subset.')
     st.write('BART supplies initial labels. Confident seeds train logistic regression, random forest, XGBoost, LinearSVC and stacking. A cautious refinement rule adds accepted pseudo-labels from the uncertain training pool.')
     st.markdown('**Flow:** group duplicates → reserve review groups → split → train → refine → select on validation → freeze → evaluate.')
     st.subheader('Four training stages')
@@ -110,3 +129,19 @@ else:
     st.caption('The completed audit was identified by the user as reviewed. Original annotation notes and AI-assisted provenance are retained in the audit export; no second independent annotator was verified.')
     st.write('Validation macro F1 selected the model. Audit groups are excluded from revised fits and selection. Earlier development may have exposed some articles, and earlier test results were already viewed.')
     st.link_button('Open training notebook', 'https://colab.research.google.com/drive/1Plj_ClnBPtqoSGWoWiQWmAhl1xUmP5PQ')
+else:
+    st.title('Sources')
+    st.markdown('''**News corpus**  
+[nuuuwan/lk_news](https://github.com/nuuuwan/lk_news) — upstream Sri Lankan news archive. Original reporting belongs to the respective publishers. The preprocessing notebook documents the pinned snapshot and construction of the English subset.
+
+**This project**  
+[Source code, notebooks and selected results](https://github.com/rithakith/sri-lankan-news-ensemble) — preprocessing, training, dashboard and the frozen model.
+
+**Evaluation and model**  
+The zero-shot teacher is [facebook/bart-large-mnli](https://huggingface.co/facebook/bart-large-mnli). The upstream snapshot is [8a14da7](https://github.com/nuuuwan/lk_news/tree/8a14da7c922131fcf6adc4f70726cabcb1c518d8).
+
+The dashboard reads exported metrics from the completed experiment and loads the saved TF-IDF + LinearSVC pipeline. BART is the original pseudo-labeling baseline; it is not run live here. The 300-label audit is the supplied reviewed set, with annotation provenance retained in the repository.
+
+**Libraries**  
+[scikit-learn](https://scikit-learn.org/) · [Streamlit](https://streamlit.io/) · [Plotly](https://plotly.com/python/)
+''')

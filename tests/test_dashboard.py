@@ -48,14 +48,16 @@ def test_dashboard_views_and_live_prediction():
     app = AppTest.from_file(str(ROOT / 'dashboard/app.py')).run(timeout=30)
     assert not app.exception
     assert app.metric[0].value == '64%'
-    next(r for r in app.radio if r.label == 'Evaluation').set_value('Validation experiments').run()
+    next(r for r in app.button_group if r.label == 'Evaluation').set_value('Validation experiments').run()
     assert not app.exception
     for choice in ['Human labels vs BART', 'LinearSVC vs BART']:
         app.selectbox[0].set_value(choice).run()
         assert not app.exception
-    app.sidebar.radio[0].set_value('About the study').run()
+    next(r for r in app.button_group if r.label == 'Explore').set_value('About the study').run()
     assert not app.exception
-    app.sidebar.radio[0].set_value('Predict an article').run()
+    next(r for r in app.button_group if r.label == 'Explore').set_value('Sources').run()
+    assert not app.exception
+    next(r for r in app.button_group if r.label == 'Explore').set_value('Predict an article').run()
     app.button[0].click().run()
     assert app.warning
     app.text_input[0].set_value('Sri Lanka wins cricket match')
