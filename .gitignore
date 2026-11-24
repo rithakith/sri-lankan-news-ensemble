@@ -11,3 +11,4 @@ assignment_improvements/
 .chart-data-*/
 *.zip
 *.joblib
+!models/final_classifier.joblib
